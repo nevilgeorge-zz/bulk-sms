@@ -1,7 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h2> Add individual to number here </h2>
-  <h2> Add individual from number here </h2>
-  <h2> Add from csv (upload form) </h2>
-  <h2> Add from txt (upload form) </h2>
+  <form action="" method="post" name="add_to_number">
+    {{ to_number_form.hidden_tag() }}
+    <h3> Add individual to number here </h3>
+    {{ to_number_form.to_number(size=20) }}
+    <input type="submit" value="Add to number">
+  </form>
+
+  <form action="" method="post" name="add_from_number">
+    {{ from_number_form.hidden_tag() }}
+    <h3> Add individual from number here </h3>
+    {{ from_number_form.from_number(size=20) }}
+    <input type="submit" value="Add from number">
+  </form>
+
+  <form action="" method="post" name="upload_file" enctype="multipart/form-data">
+    {{ upload_file_form.hidden_tag() }}
+    <h3> Add from csv/txt (upload form) </h3>
+    {{ upload_file_form.number_file }}
+    <input type="submit" value="Upload file">
+  </form>
+
 {% endblock %}
