@@ -5,7 +5,7 @@ from flask import redirect, render_template
 from sqlalchemy.exc import IntegrityError
 
 from app import app, db, models, utils, repository
-from app.repository import number_repo
+from app.repository import number_repo, subscription_repo
 import forms
 
 @app.route('/')
@@ -48,13 +48,17 @@ def number():
 	if add_number_form.validate_on_submit():
 		normalized_number = utils.normalize_number(add_number_form.number.data)
 		try:
-			number_repo.create_number(
+			number_repo.create_one(
 				number=normalized_number,
 				subscription_id=int(add_number_form.subscription.data)
 			)
 		except IntegrityError:
 			print 'Number already exists!'
 			pass
+
+		# reset form
+		add_number_form.normalized_number.data = None
+		add_number_form.subscription.data = '1'
 
 	if upload_file_form.validate_on_submit():
 		f = upload_file_form.number_file.data
@@ -68,7 +72,7 @@ def number():
 
 		for num in numbers:
 			try:
-				number_repo.create_number(
+				number_repo.create_one(
 					number=num,
 					subscription_id=subscription_id
 				)
@@ -99,4 +103,31 @@ def sender():
 		'sender.html',
 		senders=senders,
 		add_sender_form=add_sender_form
+	)
+
+
+@app.route('/subscription', methods=['GET', 'POST'])
+def subscription():
+	"""Render show/create subscriptions page."""
+
+	add_sub_form = forms.AddSubscriptionForm()
+	if add_sub_form.validate_on_submit():
+		try:
+			subscription_repo.create_one(
+				title=add_sub_form.title.data
+			)
+		except IntegrityError:
+			print '{title} already exists!'.format(title=add_sub_form.title.data)
+			pass
+
+		# reset form
+		add_sub_form.title.data = None
+
+	subscriptions = subscription_repo.get_all()
+	subscriptions = [sub.title for sub in subscriptions]
+
+	return render_template(
+		'subscription.html',
+		subscriptions=subscriptions,
+		add_sub_form=add_sub_form
 	)

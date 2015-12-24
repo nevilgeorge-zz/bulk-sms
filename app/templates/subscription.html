@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h3> Currently active subscriptions </h3>
+  <ul>
+    {% for sub in subscriptions %}
+    <li>{{ sub }}</li>
+    {% endfor %}
+  </ul>
+
+  <form action="" method="post" name="add_sub">
+    {{ add_sub_form.hidden_tag() }}
+    <h3> Add new subscription </h3>
+    {{ add_sub_form.title(size=50) }}
+    <input type="submit" value="Add subscription">
+  </form>
+
+{% endblock %}

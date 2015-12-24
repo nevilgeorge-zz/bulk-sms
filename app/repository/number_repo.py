@@ -1,7 +1,7 @@
 # number_repo.py
 from app import db, models
 
-def create_number(**kwargs):
+def create_one(**kwargs):
     """Create number using kwargs."""
 
     number = models.Number(**kwargs)

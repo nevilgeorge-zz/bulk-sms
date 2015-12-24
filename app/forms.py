@@ -44,3 +44,10 @@ class UploadFileForm(Form):
     subscriptions = models.Subscription.query.all()
     choices = [(str(sub.id), sub.title) for sub in subscriptions]
     subscription = SelectField('Subscription', choices=choices, validators=[DataRequired()])
+
+
+class AddSubscriptionForm(Form):
+
+    """Form used to create a new subscription."""
+
+    title = StringField('name', validators=[DataRequired()])
