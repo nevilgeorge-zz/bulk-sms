@@ -1,5 +1,6 @@
 # forms.py
 from app import db, models
+from app.repository import subscription_repo
 from flask.ext.wtf import Form
 from wtforms import FileField, SelectMultipleField, StringField, TextAreaField, RadioField, SelectField
 from wtforms.validators import DataRequired
@@ -23,7 +24,7 @@ class AddNumberForm(Form):
 
     number = StringField('Number', validators=[DataRequired()])
 
-    subscriptions = models.Subscription.query.all()
+    subscriptions = subscription_repo.get_all()
     choices = [(str(sub.id), sub.title) for sub in subscriptions]
     subscription = SelectField('Subscription', choices=choices, validators=[DataRequired()])
 
@@ -41,7 +42,7 @@ class UploadFileForm(Form):
 
     number_file = FileField('Number File', validators=[DataRequired()])
 
-    subscriptions = models.Subscription.query.all()
+    subscriptions = subscription_repo.get_all()
     choices = [(str(sub.id), sub.title) for sub in subscriptions]
     subscription = SelectField('Subscription', choices=choices, validators=[DataRequired()])
 

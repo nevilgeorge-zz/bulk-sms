@@ -2,10 +2,10 @@
 import os
 
 from flask import redirect, render_template
-from sqlalchemy.exc import IntegrityError
 
 from app import app, db, models, utils, repository
-from app.repository import number_repo, subscription_repo
+from app.exceptions.duplicate_error import DuplicateError
+from app.repository import number_repo, sender_repo, subscription_repo
 import forms
 
 @app.route('/')
@@ -52,8 +52,8 @@ def number():
 				number=normalized_number,
 				subscription_id=int(add_number_form.subscription.data)
 			)
-		except IntegrityError:
-			print 'Number already exists!'
+		except DuplicateError as e:
+			print e
 			pass
 
 		# reset form
@@ -76,8 +76,8 @@ def number():
 					number=num,
 					subscription_id=subscription_id
 				)
-			except IntegrityError:
-				print '{num} already exists!'.format(num=num)
+			except DuplicateError as e:
+				print e
 				pass
 
 	return render_template(
@@ -91,13 +91,23 @@ def number():
 def sender():
 	"""Render show senders/ add sender page."""
 
-	sender_list = models.Sender.query.all()
-	senders = [sender.sender_number for sender in sender_list]
-
 	add_sender_form = forms.AddSenderForm()
 
 	if add_sender_form.validate_on_submit():
-		print add_sender_form.sender_number.data
+		number = utils.normalize_number(add_sender_form.sender_number.data)
+		try:
+			sender_repo.create_one(
+				number=number
+			)
+		except DuplicateError as e:
+			print e
+			pass
+
+		# reset form
+		add_sender_form.sender_number.data = None
+
+	senders = sender_repo.get_all()
+	senders = [sender.number for sender in senders]
 
 	return render_template(
 		'sender.html',
@@ -116,8 +126,8 @@ def subscription():
 			subscription_repo.create_one(
 				title=add_sub_form.title.data
 			)
-		except IntegrityError:
-			print '{title} already exists!'.format(title=add_sub_form.title.data)
+		except DuplicateError as e:
+			print e
 			pass
 
 		# reset form
