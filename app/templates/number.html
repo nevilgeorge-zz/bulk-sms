@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-  <form action="" method="post" name="add_to_number">
-    {{ to_number_form.hidden_tag() }}
-    <h3> Add individual to number here </h3>
-    {{ to_number_form.to_number(size=20) }}
-    {{ to_number_form.subscription }}
-    <input type="submit" value="Add to number">
+  <form action="" method="post" name="add_number_form">
+    {{ add_number_form.csrf_token }}
+    <h3> Add individual number here </h3>
+    {{ add_number_form.number(size=20) }}
+    {{ add_number_form.subscription }}
+    <input type="submit" value="Add number">
   </form>
 
   <form action="" method="post" name="upload_file" enctype="multipart/form-data">
     {{ upload_file_form.hidden_tag() }}
     <h3> Add from csv/txt (upload form) </h3>
     {{ upload_file_form.number_file }}
+    {{ upload_file_form.subscription }}
     <input type="submit" value="Upload file">
   </form>
 
