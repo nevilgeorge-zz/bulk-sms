@@ -1,6 +1,7 @@
 # forms.py
+from app import db, models
 from flask.ext.wtf import Form
-from wtforms import FileField, SelectMultipleField, StringField, TextAreaField
+from wtforms import FileField, SelectMultipleField, StringField, TextAreaField, RadioField
 from wtforms.validators import DataRequired
 
 class SendMessageForm(Form):
@@ -22,12 +23,16 @@ class AddToNumberForm(Form):
 
     to_number = StringField('to_number')
 
+    subscriptions = models.Subscription.query.all()
+    choices = [(sub.id, sub.title) for sub in subscriptions]
+    subscription = RadioField('Subscription', choices=choices)
 
-class AddFromNumberForm(Form):
+
+class AddSenderForm(Form):
 
     """Form used to add a new to/from number."""
 
-    from_number = StringField('from_number')
+    sender_number = StringField('from_number')
 
 
 class UploadFileForm(Form):

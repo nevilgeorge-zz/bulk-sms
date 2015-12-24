@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h3> Currently active senders </h3>
+  <ul>
+    {% for number in senders %}
+    <li>{{ number }}</li>
+    {% endfor %}
+  </ul>
+
+  <form action="" method="post" name="add_to_number">
+    {{ add_sender_form.hidden_tag() }}
+    <h3> Add sender number </h3>
+    {{ add_sender_form.sender_number(size=20) }}
+    <input type="submit" value="Add sender number">
+  </form>
+
+{% endblock %}

@@ -14,7 +14,7 @@ class Message(db.Model):
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(32), index=True, unique=True)
-    messages_count = db.Column(db.Integer, index=True)
+    messages_count = db.Column(db.Integer, index=True, default=0)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     # one subscription, many numbers
     numbers = db.relationship('Number', backref='subscription', lazy='dynamic')
@@ -31,4 +31,5 @@ class Number(db.Model):
 
 class Sender(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    sender_number = db.Column(db.String, index=True, unique=True)
     numbers = db.relationship('Number', backref='author', lazy='dynamic')

@@ -1,7 +1,7 @@
 # views.py
-from app import app
+from app import app, models
 from flask import redirect, render_template
-from forms import AddToNumberForm, AddFromNumberForm, SendMessageForm, UploadFileForm
+import forms
 
 @app.route('/')
 @app.route('/index')
@@ -19,7 +19,7 @@ def index():
 def send():
 	"""Render sms sending page."""
 
-	send_message_form = SendMessageForm()
+	send_message_form = forms.SendMessageForm()
 	if send_message_form.validate_on_submit():
 		print 'Sent message {message_text} to:'.format(
 			message_text=send_message_form.message_text.data
@@ -33,23 +33,17 @@ def send():
 	)
 
 
-@app.route('/add', methods=['GET', 'POST'])
-def add():
+@app.route('/number', methods=['GET', 'POST'])
+def number():
 	"""Render add number/ add by file page."""
 
-	to_number_form = AddToNumberForm()
-	from_number_form = AddFromNumberForm()
-	upload_file_form = UploadFileForm()
+	to_number_form = forms.AddToNumberForm()
+	upload_file_form = forms.UploadFileForm()
 
 	if to_number_form.validate_on_submit():
 		if to_number_form.to_number.data != '':
 			print 'To number'
 			print to_number_form.to_number.data
-
-	if from_number_form.validate_on_submit():
-		if from_number_form.from_number.data != '':
-			print 'From number'
-			print from_number_form.from_number.data
 
 	if upload_file_form.validate_on_submit():
 		print upload_file_form.number_file.data
@@ -59,4 +53,23 @@ def add():
 		to_number_form=to_number_form,
 		from_number_form=from_number_form,
 		upload_file_form=upload_file_form
+	)
+
+
+@app.route('/sender', methods=['GET', 'POST'])
+def sender():
+	"""Render show senders/ add sender page."""
+
+	sender_list = models.Sender.query.all()
+	senders = [sender.sender_number for sender in sender_list]
+
+	add_sender_form = forms.AddSenderForm()
+
+	if add_sender_form.validate_on_submit():
+		print add_sender_form.sender_number.data
+
+	return render_template(
+		'sender.html',
+		senders=senders,
+		add_sender_form=add_sender_form
 	)
