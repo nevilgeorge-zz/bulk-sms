@@ -1,8 +1,8 @@
 # sender_repo.py
+from sqlalchemy.exc import IntegrityError
+
 from app import db, models
 from app.exceptions.duplicate_error import DuplicateError
-
-from sqlalchemy.exc import IntegrityError
 
 
 def create_one(**kwargs):
@@ -17,5 +17,5 @@ def create_one(**kwargs):
 
 
 def get_all():
-    """Return all sender entities."""
+    """Return all Sender entities."""
     return models.Sender.query.all()

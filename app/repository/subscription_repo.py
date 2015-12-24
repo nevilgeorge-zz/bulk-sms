@@ -1,13 +1,8 @@
 # subscription_repo.py
-from app import db, models
-from app.exceptions.duplicate_error import DuplicateError
-
 from sqlalchemy.exc import IntegrityError
 
-
-def get_all():
-    """Return all subscription entities."""
-    return models.Subscription.query.all()
+from app import db, models
+from app.exceptions.duplicate_error import DuplicateError
 
 
 def create_one(**kwargs):
@@ -19,3 +14,8 @@ def create_one(**kwargs):
     except IntegrityError:
         db.session.rollback()
         raise DuplicateError('Subscription already exists!')
+
+
+def get_all():
+    """Return all Subscription entities."""
+    return models.Subscription.query.all()

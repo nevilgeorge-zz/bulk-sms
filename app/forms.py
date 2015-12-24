@@ -1,12 +1,12 @@
 # forms.py
-from app import db, models
-from app.repository import subscription_repo
 from flask.ext.wtf import Form
 from wtforms import FileField, SelectMultipleField, StringField, TextAreaField, RadioField, SelectField
 from wtforms.validators import DataRequired
 
-class SendMessageForm(Form):
+from app import db, models
+from app.repository import subscription_repo
 
+class SendMessageForm(Form):
     """Form used to send a message to a subscription."""
 
     message_text = TextAreaField('message_text', validators=[DataRequired()])
@@ -19,7 +19,6 @@ class SendMessageForm(Form):
 
 
 class AddNumberForm(Form):
-
     """Form used to add a new to/from number."""
 
     number = StringField('Number', validators=[DataRequired()])
@@ -30,14 +29,12 @@ class AddNumberForm(Form):
 
 
 class AddSenderForm(Form):
-
     """Form used to add a new to/from number."""
 
     sender_number = StringField('from_number', validators=[DataRequired()])
 
 
 class UploadFileForm(Form):
-
     """Form used to upload a csv/txt file of numbers."""
 
     number_file = FileField('Number File', validators=[DataRequired()])
@@ -48,7 +45,6 @@ class UploadFileForm(Form):
 
 
 class AddSubscriptionForm(Form):
-
     """Form used to create a new subscription."""
 
     title = StringField('name', validators=[DataRequired()])
