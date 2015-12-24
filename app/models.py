@@ -17,7 +17,7 @@ class Subscription(db.Model):
     messages_count = db.Column(db.Integer, index=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     # one subscription, many numbers
-    numbers = db.relationship('Number', backref='author', lazy='dynamic')
+    numbers = db.relationship('Number', backref='subscription', lazy='dynamic')
 
 
 class Number(db.Model):
