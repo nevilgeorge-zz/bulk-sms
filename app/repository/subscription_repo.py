@@ -6,7 +6,7 @@ from app.exceptions.duplicate_error import DuplicateError
 
 
 def create_one(**kwargs):
-    """Create a subscription from kwargs."""
+    """Create Subscription entity from kwargs."""
     sub = models.Subscription(**kwargs)
     db.session.add(sub)
     try:
@@ -23,5 +23,5 @@ def get_all():
 
 def get_by_id(subscription_id):
     """Return Subscription entity with given subscription_id."""
-    subscription = models.Subscription.query.filter_by(id=subscription_id)
+    subscription = models.Subscription.query.filter_by(id=subscription_id).first()
     return subscription

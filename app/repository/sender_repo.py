@@ -6,7 +6,7 @@ from app.exceptions.duplicate_error import DuplicateError
 
 
 def create_one(**kwargs):
-    """Create a sender from kwargs."""
+    """Create Sender entity from kwargs."""
     sender = models.Sender(**kwargs)
     db.session.add(sender)
     try:
@@ -30,7 +30,7 @@ def get_min_sender():
 
 def get_by_id(sender_id):
     """Return Sender entity with given sender_id."""
-    sender = models.Sender.query.filter_by(id=sender_id)
+    sender = models.Sender.query.filter_by(id=sender_id).first()
     return sender
 
 

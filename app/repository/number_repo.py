@@ -7,7 +7,7 @@ from app.repository import sender_repo
 
 
 def create_one(**kwargs):
-    """Create number using kwargs."""
+    """Create Number entity using kwargs."""
     min_sender = sender_repo.get_min_sender()
     kwargs['sender_id'] = min_sender.id if min_sender != None else None
     number = models.Number(**kwargs)
@@ -26,5 +26,5 @@ def get_all():
 
 def get_by_kwargs(**kwargs):
     """Find Number entity by given kwargs and return it."""
-    number = models.Number.query.filter_by(**kwargs)
-    return number
+    numbers = models.Number.query.filter_by(**kwargs).all()
+    return numbers
