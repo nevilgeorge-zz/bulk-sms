@@ -3,3 +3,4 @@ config.py
 *.pyc
 app/*.pyc
 *.db
+db_repository
