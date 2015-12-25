@@ -2,8 +2,9 @@
 from twilio import TwilioRestException
 from twilio.rest import TwilioRestClient
 
-from app.repository import number_repo, sender_repo, subscription_repo
 from app import config, utils
+from app.exceptions.not_found_error import NotFoundError
+from app.repository import number_repo, sender_repo, subscription_repo
 
 class TwilioDispatcher:
     """Sends text messages using Twilio API."""
@@ -19,7 +20,10 @@ class TwilioDispatcher:
         """Send one message to given to_number that already exists in db."""
         # find the associated sender
         normalized = utils.normalize_number(to_number)
-        number = number_repo.get_by_kwargs(number=normalized)[0]
+        number = number_repo.get_by_kwargs(number=normalized)
+        if len(number) == 0:
+            raise NotFoundError('Number {num} not found'.format(num=normalized))
+
         sender = sender_repo.get_by_id(number.sender_id)
 
         try:
@@ -52,7 +56,7 @@ class TwilioDispatcher:
                 try:
                     self.send_to_number(number.number, text)
 
-                except TwilioRestException as e:
+                except (TwilioRestException, NotFoundError) as e:
                     failed_list.append(number)
                     pass
 
