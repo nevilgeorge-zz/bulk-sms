@@ -26,3 +26,15 @@ def get_min_sender():
     senders = get_all()
     min_sender = min(senders, key=lambda sender: len(sender.numbers.all()))
     return min_sender
+
+
+def get_by_id(sender_id):
+    """Return Sender entity with given sender_id."""
+    sender = models.Sender.query.filter_by(id=sender_id)
+    return sender
+
+
+def get_by_kwargs(**kwargs):
+    """Find Sender entity by given **kwargs and return it."""
+    sender = models.Sender.query.filter_by(**kwargs)
+    return sender

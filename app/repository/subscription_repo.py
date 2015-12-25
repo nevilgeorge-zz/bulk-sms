@@ -19,3 +19,9 @@ def create_one(**kwargs):
 def get_all():
     """Return all Subscription entities."""
     return models.Subscription.query.all()
+
+
+def get_by_id(subscription_id):
+    """Return Subscription entity with given subscription_id."""
+    subscription = models.Subscription.query.filter_by(id=subscription_id)
+    return subscription

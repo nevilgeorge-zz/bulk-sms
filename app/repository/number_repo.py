@@ -22,3 +22,9 @@ def create_one(**kwargs):
 def get_all():
     """Return all Number entities."""
     return models.Number.query.all()
+
+
+def get_by_kwargs(**kwargs):
+    """Find Number entity by given kwargs and return it."""
+    number = models.Number.query.filter_by(**kwargs)
+    return number
