@@ -33,4 +33,4 @@ class Number(db.Model):
 class Sender(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String, index=True, unique=True)
-    numbers = db.relationship('Number', backref='author', lazy='dynamic')
+    numbers = db.relationship('Number', backref='sender', lazy='dynamic')

@@ -57,7 +57,7 @@ def number():
 			pass
 
 		# reset form
-		add_number_form.normalized_number.data = None
+		add_number_form.number.data = None
 		add_number_form.subscription.data = '1'
 
 	if upload_file_form.validate_on_submit():

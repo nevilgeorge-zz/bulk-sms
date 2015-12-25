@@ -19,3 +19,10 @@ def create_one(**kwargs):
 def get_all():
     """Return all Sender entities."""
     return models.Sender.query.all()
+
+
+def get_min_sender():
+    """Return the sender with minimum count of associated numbers."""
+    senders = get_all()
+    min_sender = min(senders, key=lambda sender: len(sender.numbers.all()))
+    return min_sender
