@@ -23,5 +23,7 @@ def get_all():
 
 def get_by_id(subscription_id):
     """Return Subscription entity with given subscription_id."""
-    subscription = models.Subscription.query.filter_by(id=subscription_id).first()
+    subscription = models.Subscription.query.filter_by(
+        id=subscription_id
+    ).first()
     return subscription

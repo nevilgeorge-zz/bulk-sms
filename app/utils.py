@@ -9,6 +9,8 @@ def normalize_number(input_number):
     number = re.sub('[^0-9]', '', input_number)
     if len(number) == 10:
         number = '+1{num}'.format(num=number)
+    elif len(number) == 11:
+        number = '+{num}'.format(num=number)
 
     return number
 

@@ -1,7 +1,7 @@
 # number_repo.py
 from sqlalchemy.exc import IntegrityError
 
-from app import db, models
+from app import db, models, utils
 from app.exceptions.duplicate_error import DuplicateError
 from app.repository import sender_repo
 
@@ -22,6 +22,15 @@ def create_one(**kwargs):
 def get_all():
     """Return all Number entities."""
     return models.Number.query.all()
+
+
+def get_by_number(num):
+    """Return Number entity with given number."""
+    normalized_number = utils.normalize_number(num)
+    number = models.Number.query.filter_by(
+        number=normalized_number
+    ).first()
+    return number
 
 
 def get_by_kwargs(**kwargs):

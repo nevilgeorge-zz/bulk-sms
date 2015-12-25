@@ -19,10 +19,9 @@ class TwilioDispatcher:
     def send_to_number(self, to_number, text):
         """Send one message to given to_number that already exists in db."""
         # find the associated sender
-        normalized = utils.normalize_number(to_number)
-        number = number_repo.get_by_kwargs(number=normalized)
-        if len(number) == 0:
-            raise NotFoundError('Number {num} not found'.format(num=normalized))
+        number = number_repo.get_by_number(to_number)
+        if not number:
+            raise NotFoundError('Number {num} not found'.format(num=to_number))
 
         sender = sender_repo.get_by_id(number.sender_id)
 
@@ -30,7 +29,7 @@ class TwilioDispatcher:
             # send through the sender
             message = self.client.messages.create(
                 body=text,
-                to=normalized,
+                to=number.number,
                 from_=sender.number
             )
 
@@ -41,7 +40,8 @@ class TwilioDispatcher:
 
     def send_to_subscription(self, subscription_id, text):
         """Send one message to every number in a subscription."""
-        senders = sender_repo.get_all()
+        # senders = sender_repo.get_all()
+        senders = sender_repo.get_all()[:1]
         failed_list = []
 
         for sender in senders:
