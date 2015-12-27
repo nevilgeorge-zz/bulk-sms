@@ -16,7 +16,9 @@ def create_one(**kwargs):
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        raise DuplicateError('Number already exists!')
+        e = DuplicateError('Number already exists!')
+        e.number = number.number
+        raise e
 
 
 def get_all():

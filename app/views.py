@@ -1,7 +1,7 @@
 # views.py
 import os
 
-from flask import redirect, render_template
+from flask import flash, redirect, render_template
 
 from app import app, db, models, utils, repository
 from app.exceptions.duplicate_error import DuplicateError
@@ -10,7 +10,7 @@ from app.twilio_dispatcher import TwilioDispatcher
 import forms
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET'])
 def index():
 	"""Render index page."""
 
@@ -65,8 +65,10 @@ def number():
 				number=normalized_number,
 				subscription_id=int(add_number_form.subscription.data)
 			)
+			flash('Number added!', 'success')
 		except DuplicateError as e:
 			print e
+			flash('Number already exists!', 'error')
 			pass
 
 		# reset form
@@ -90,8 +92,14 @@ def number():
 					subscription_id=subscription_id
 				)
 			except DuplicateError as e:
+				flash(
+					'Number {number} already exists!'.format(number=e.number),
+					'error'
+				)
 				print e
 				pass
+
+		flash('Numbers added!', 'success')
 
 	return render_template(
 		'number.html',
@@ -112,7 +120,9 @@ def sender():
 			sender_repo.create_one(
 				number=number
 			)
+			flash('Sender added!', 'success')
 		except DuplicateError as e:
+			flash('Sender already exists!', 'error')
 			print e
 			pass
 
@@ -139,7 +149,9 @@ def subscription():
 			subscription_repo.create_one(
 				title=add_sub_form.title.data
 			)
+			flash('Subscription added!', 'success')
 		except DuplicateError as e:
+			flash('Subscription already exists!', 'error')
 			print e
 			pass
 
@@ -155,11 +167,12 @@ def subscription():
 	)
 
 
-@app.route('/subscription/<sub_id>')
+@app.route('/subscription/<sub_id>', methods=['GET'])
 def subscription_view(sub_id):
 	"""Render all numbers in given subscription."""
 	subscription = subscription_repo.get_by_id(sub_id)
 	if subscription == None:
+		flash('Subscription does not exist!')
 		return redirect('/')
 
 	numbers = number_repo.get_by_kwargs(

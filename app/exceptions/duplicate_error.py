@@ -5,6 +5,7 @@ class DuplicateError(Exception):
 
     def __init__(self, value):
         self.value = value
+        self.number = ''
 
     def __str__(self):
         return repr(self.value)
