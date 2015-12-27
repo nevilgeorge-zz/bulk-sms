@@ -24,7 +24,7 @@ def get_all():
 def get_min_sender():
     """Return the sender with minimum count of associated numbers."""
     senders = get_all()
-    min_sender = min(senders, key=lambda sender: len(sender.numbers.all()))
+    min_sender = min(senders, key=lambda sender: len(sender.numbers.all())) if len(senders) != 0 else None
     return min_sender
 
 

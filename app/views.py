@@ -14,11 +14,9 @@ import forms
 def index():
 	"""Render index page."""
 
-	user = {'name': 'Nevil'}
 	return render_template(
 		'index.html',
-		hackathon='Wildhacks',
-		user=user
+		hackathon='Wildhacks'
 	)
 
 
