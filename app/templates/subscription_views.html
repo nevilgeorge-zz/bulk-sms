@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h3> Numbers in subscription </h3>
+  {% if numbers|length == 0 %}
+
+  <p>No numbers associated with this subscription.</p>
+
+  {% else %}
+
+  <ul>
+    {% for number in numbers %}
+    <li>
+      {{ number.number }}
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% endif %}
+{% endblock %}

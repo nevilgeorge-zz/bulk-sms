@@ -40,8 +40,7 @@ class TwilioDispatcher:
 
     def send_to_subscription(self, subscription_id, text):
         """Send one message to every number in a subscription."""
-        # senders = sender_repo.get_all()
-        senders = sender_repo.get_all()[:1]
+        senders = sender_repo.get_all()
         failed = {}
 
         for sender in senders:

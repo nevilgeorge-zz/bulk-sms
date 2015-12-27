@@ -147,10 +147,26 @@ def subscription():
 		add_sub_form.title.data = None
 
 	subscriptions = subscription_repo.get_all()
-	subscriptions = [sub.title for sub in subscriptions]
 
 	return render_template(
 		'subscription.html',
 		subscriptions=subscriptions,
 		add_sub_form=add_sub_form
+	)
+
+
+@app.route('/subscription/<sub_id>')
+def subscription_view(sub_id):
+	"""Render all numbers in given subscription."""
+	subscription = subscription_repo.get_by_id(sub_id)
+	if subscription == None:
+		return redirect('/')
+
+	numbers = number_repo.get_by_kwargs(
+		subscription_id=sub_id
+	)
+
+	return render_template(
+		'subscription_views.html',
+		numbers=numbers
 	)

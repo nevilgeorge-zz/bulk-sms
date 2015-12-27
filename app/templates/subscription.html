@@ -3,7 +3,11 @@
   <h3> Currently active subscriptions </h3>
   <ul>
     {% for sub in subscriptions %}
-    <li>{{ sub }}</li>
+    <li >
+      <a href='/subscription/{{ sub.id }}'>
+        {{ sub.title }}
+      </a>
+    </li>
     {% endfor %}
   </ul>
 
