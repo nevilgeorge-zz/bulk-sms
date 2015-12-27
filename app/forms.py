@@ -10,10 +10,11 @@ class SendMessageForm(Form):
     """Form used to send a message to a subscription."""
 
     message_text = TextAreaField('message_text', validators=[DataRequired()])
-    subs = ['Hackers', 'Mentors', 'Judges']
-    subscriptions = SelectMultipleField(
-        'subscriptions',
-        choices=[(s.lower(), s) for s in subs],
+    subs = subscription_repo.get_all()
+    choices = [(str(sub.id), sub.title) for sub in subs]
+    subscription = SelectField(
+        'subscription',
+        choices=choices,
         validators=[DataRequired()]
     )
 

@@ -6,12 +6,14 @@ from flask import redirect, render_template
 from app import app, db, models, utils, repository
 from app.exceptions.duplicate_error import DuplicateError
 from app.repository import number_repo, sender_repo, subscription_repo
+from app.twilio_dispatcher import TwilioDispatcher
 import forms
 
 @app.route('/')
 @app.route('/index')
 def index():
 	"""Render index page."""
+
 	user = {'name': 'Nevil'}
 	return render_template(
 		'index.html',
@@ -26,11 +28,22 @@ def send():
 
 	send_message_form = forms.SendMessageForm()
 	if send_message_form.validate_on_submit():
-		print 'Sent message {message_text} to:'.format(
-			message_text=send_message_form.message_text.data
-		)
-		print send_message_form.subscriptions.data
-		return redirect('/index')
+		subscription_id = int(send_message_form.subscription.data)
+		message_text = send_message_form.message_text.data
+
+		twilio_dispatcher = TwilioDispatcher()
+		failed = twilio_dispatcher.send_to_subscription(subscription_id, message_text)
+
+		if len(failed) != 0:
+			print 'Following numbers failed to be sent to:'
+			for number, exception in failed.iteritems():
+				print '{num} : {reason}'.format(
+					num=number,
+					reason=exception
+				)
+
+		send_message_form.message_text.data = None
+		send_message_form.subscription.data = None
 
 	return render_template(
 		'send.html',

@@ -42,7 +42,7 @@ class TwilioDispatcher:
         """Send one message to every number in a subscription."""
         # senders = sender_repo.get_all()
         senders = sender_repo.get_all()[:1]
-        failed_list = []
+        failed = {}
 
         for sender in senders:
             # get numbers associated with each sender
@@ -57,7 +57,7 @@ class TwilioDispatcher:
                     self.send_to_number(number.number, text)
 
                 except (TwilioRestException, NotFoundError) as e:
-                    failed_list.append(number)
+                    failed[number.number] = str(e)
                     pass
 
-        return failed_list
+        return failed
