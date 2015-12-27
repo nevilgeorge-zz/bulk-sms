@@ -2,17 +2,18 @@
 from twilio import TwilioRestException
 from twilio.rest import TwilioRestClient
 
-from app import config, utils
+from app import utils
 from app.exceptions.not_found_error import NotFoundError
 from app.repository import number_repo, sender_repo, subscription_repo
+from config import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
 
 class TwilioDispatcher:
     """Sends text messages using Twilio API."""
 
     def __init__(self):
         self.client = TwilioRestClient(
-            config.TWILIO_ACCOUNT_SID,
-            config.TWILIO_AUTH_TOKEN
+            TWILIO_ACCOUNT_SID,
+            TWILIO_AUTH_TOKEN
         )
 
 
