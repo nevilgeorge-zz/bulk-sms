@@ -26,6 +26,13 @@ def send():
 
 	send_message_form = forms.SendMessageForm()
 	if send_message_form.validate_on_submit():
+		# check if there are any active senders first
+		senders = sender_repo.get_all()
+		if len(senders) == 0:
+			# fail early if no senders
+			flash('No senders added!', 'error')
+			return redirect('/send')
+
 		subscription_id = int(send_message_form.subscription.data)
 		message_text = send_message_form.message_text.data
 
@@ -33,12 +40,12 @@ def send():
 		failed = twilio_dispatcher.send_to_subscription(subscription_id, message_text)
 
 		if len(failed) != 0:
-			flash('Following numbers failed to be sent to:')
+			flash('Following numbers failed to be sent to:', 'error')
 			for number, exception in failed.iteritems():
 				flash('{num} : {reason}'.format(
 					num=number,
 					reason=exception
-				))
+				), 'error')
 
 		send_message_form.message_text.data = None
 		send_message_form.subscription.data = None
@@ -141,7 +148,7 @@ def sender_views(sender_id):
 	"""Render all numbers associated with given sender."""
 	sender = sender_repo.get_by_id(sender_id)
 	if sender == None:
-		flash('Sender does not exist!')
+		flash('Sender does not exist!', 'error')
 		return redirect('/')
 
 	numbers = number_repo.get_by_kwargs(
@@ -187,7 +194,7 @@ def subscription_view(sub_id):
 	"""Render all numbers in given subscription."""
 	subscription = subscription_repo.get_by_id(sub_id)
 	if subscription == None:
-		flash('Subscription does not exist!')
+		flash('Subscription does not exist!', 'error')
 		return redirect('/')
 
 	numbers = number_repo.get_by_kwargs(
