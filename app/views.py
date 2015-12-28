@@ -33,12 +33,12 @@ def send():
 		failed = twilio_dispatcher.send_to_subscription(subscription_id, message_text)
 
 		if len(failed) != 0:
-			print 'Following numbers failed to be sent to:'
+			flash('Following numbers failed to be sent to:')
 			for number, exception in failed.iteritems():
-				print '{num} : {reason}'.format(
+				flash('{num} : {reason}'.format(
 					num=number,
 					reason=exception
-				)
+				))
 
 		send_message_form.message_text.data = None
 		send_message_form.subscription.data = None
@@ -128,12 +128,29 @@ def sender():
 		add_sender_form.sender_number.data = None
 
 	senders = sender_repo.get_all()
-	senders = [sender.number for sender in senders]
 
 	return render_template(
 		'sender.html',
 		senders=senders,
 		add_sender_form=add_sender_form
+	)
+
+
+@app.route('/sender/<sender_id>', methods=['GET'])
+def sender_views(sender_id):
+	"""Render all numbers associated with given sender."""
+	sender = sender_repo.get_by_id(sender_id)
+	if sender == None:
+		flash('Sender does not exist!')
+		return redirect('/')
+
+	numbers = number_repo.get_by_kwargs(
+		sender_id=sender_id
+	)
+
+	return render_template(
+		'sender_views.html',
+		numbers=numbers
 	)
 
 

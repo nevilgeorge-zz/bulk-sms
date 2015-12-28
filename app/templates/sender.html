@@ -2,8 +2,12 @@
 {% block content %}
   <h3> Currently active senders </h3>
   <ul>
-    {% for number in senders %}
-    <li>{{ number }}</li>
+    {% for sender in senders %}
+    <li>
+      <a href='/sender/{{ sender.id }}'>
+        {{ sender.number }}
+      </a>
+    </li>
     {% endfor %}
   </ul>
 
