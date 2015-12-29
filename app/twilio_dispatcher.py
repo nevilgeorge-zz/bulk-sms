@@ -47,7 +47,7 @@ class TwilioDispatcher:
         for sender in senders:
             # get numbers associated with each sender
             # and has given subscription_id
-            numbers = number_repo.get_by_kwargs(
+            numbers = number_repo.get_many_by_kwargs(
                 subscription_id=subscription_id,
                 sender_id=sender.id
             )

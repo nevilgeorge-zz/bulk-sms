@@ -139,7 +139,7 @@ def sender():
 
 			# check for numbers with no sender_id
 			sender = sender_repo.get_min_sender()
-			numbers = number_repo.get_by_kwargs(
+			numbers = number_repo.get_many_by_kwargs(
 				sender_id=None
 			)
 			for number in numbers:
@@ -173,7 +173,7 @@ def sender_views(sender_id):
 		flash('Sender does not exist!', 'error')
 		return redirect('/')
 
-	numbers = number_repo.get_by_kwargs(
+	numbers = number_repo.get_many_by_kwargs(
 		sender_id=sender_id
 	)
 
@@ -219,7 +219,7 @@ def subscription_view(sub_id):
 		flash('Subscription does not exist!', 'error')
 		return redirect('/')
 
-	numbers = number_repo.get_by_kwargs(
+	numbers = number_repo.get_many_by_kwargs(
 		subscription_id=sub_id
 	)
 
