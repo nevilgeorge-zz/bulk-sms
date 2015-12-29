@@ -1,11 +1,12 @@
 # views.py
+import datetime
 import os
 
 from flask import flash, redirect, render_template
 
 from app import app, db, models, utils, repository
 from app.exceptions.duplicate_error import DuplicateError
-from app.repository import number_repo, sender_repo, subscription_repo
+from app.repository import message_repo, number_repo, sender_repo, subscription_repo
 from app.twilio_dispatcher import TwilioDispatcher
 import forms
 
@@ -36,6 +37,13 @@ def send():
 		subscription_id = int(send_message_form.subscription.data)
 		message_text = send_message_form.message_text.data
 
+		# create Message entity
+		message_repo.create_one(
+			text=message_text,
+			sent_at=datetime.datetime.utcnow(),
+			subscription_id=subscription_id
+		)
+
 		twilio_dispatcher = TwilioDispatcher()
 		failed = twilio_dispatcher.send_to_subscription(subscription_id, message_text)
 
@@ -50,8 +58,11 @@ def send():
 		send_message_form.message_text.data = None
 		send_message_form.subscription.data = None
 
+	messages = message_repo.get_all()
+
 	return render_template(
 		'send.html',
+		messages=messages,
 		form=send_message_form
 	)
 

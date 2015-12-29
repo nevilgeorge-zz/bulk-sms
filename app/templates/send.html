@@ -12,4 +12,14 @@
     </div>
     <input type="submit" value="Send message">
   </form>
+
+  {% if messages|length > 0 %}
+  <h3> Previously sent messages </h3>
+  <ul>
+  {% for message in messages %}
+    <li> {{ message.text }} </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+
 {% endblock %}
