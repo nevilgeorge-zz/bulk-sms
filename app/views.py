@@ -125,6 +125,17 @@ def sender():
 			sender_repo.create_one(
 				number=number
 			)
+
+			# check for numbers with no sender_id
+			sender = sender_repo.get_min_sender()
+			numbers = number_repo.get_by_kwargs(
+				sender_id=None
+			)
+			for number in numbers:
+				number.sender_id = sender.id
+				db.session.add(number)
+			db.session.commit()
+
 			flash('Sender added!', 'success')
 		except DuplicateError as e:
 			flash('Sender already exists!', 'error')
