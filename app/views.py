@@ -31,7 +31,7 @@ def send():
 		senders = sender_repo.get_all()
 		if len(senders) == 0:
 			# fail early if no senders
-			flash('No senders added!', 'error')
+			flash('No senders available!', 'error')
 			return redirect('/send')
 
 		subscription_id = int(send_message_form.subscription.data)
