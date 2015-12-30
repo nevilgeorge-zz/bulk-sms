@@ -2,7 +2,7 @@
 import datetime
 import os
 
-from flask import flash, redirect, render_template
+from flask import flash, redirect, render_template, url_for
 
 from app import app, db, models, utils, repository
 from app.exceptions.duplicate_error import DuplicateError
@@ -26,6 +26,8 @@ def send():
 	"""Render sms sending page."""
 
 	send_message_form = forms.SendMessageForm()
+	schedule_message_form = forms.ScheduleMessageForm()
+
 	if send_message_form.validate_on_submit():
 		# check if there are any active senders first
 		senders = sender_repo.get_all()
@@ -63,7 +65,8 @@ def send():
 	return render_template(
 		'send.html',
 		messages=messages,
-		form=send_message_form
+		send_message_form=send_message_form,
+		schedule_message_form=schedule_message_form
 	)
 
 

@@ -1,6 +1,6 @@
 # forms.py
 from flask.ext.wtf import Form
-from wtforms import FileField, SelectMultipleField, StringField, TextAreaField, RadioField, SelectField
+from wtforms import FileField, SelectMultipleField, StringField, TextAreaField, RadioField, SelectField, DateTimeField
 from wtforms.validators import DataRequired
 
 from app import db, models
@@ -17,6 +17,20 @@ class SendMessageForm(Form):
         choices=choices,
         validators=[DataRequired()]
     )
+
+
+class ScheduleMessageForm(Form):
+    """Form used to schedule a message to send at a given time."""
+
+    message_text = TextAreaField('message_text', validators=[DataRequired()])
+    subs = subscription_repo.get_all()
+    choices = [(str(sub.id), sub.title) for sub in subs]
+    subscription = SelectField(
+        'subscription',
+        choices=choices,
+        validators=[DataRequired()]
+    )
+    send_time = DateTimeField('send_time', format='%Y-%m-%d %H:%M:%S')
 
 
 class AddNumberForm(Form):
