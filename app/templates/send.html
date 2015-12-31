@@ -13,21 +13,6 @@
     <input type="submit" value="Send message">
   </form>
 
-  <form action="" method="post" name="schedule_message">
-    {{schedule_message_form.hidden_tag() }}
-    <div>
-      <h3> Message text: </h3>
-      {{ schedule_message_form.message_text(size=200) }}
-    </div>
-    <div>
-      {{ schedule_message_form.subscription }}
-    </div>
-    <div>
-      {{ schedule_message_form.send_time }}
-    </div>
-    <input type="submit" value="Schedule message">
-  </form>
-
   {% if messages|length > 0 %}
   <h3> Previously sent messages </h3>
   <ul>

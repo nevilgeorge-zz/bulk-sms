@@ -26,7 +26,6 @@ def send():
 	"""Render sms sending page."""
 
 	send_message_form = forms.SendMessageForm()
-	schedule_message_form = forms.ScheduleMessageForm()
 
 	if send_message_form.validate_on_submit():
 		# check if there are any active senders first
@@ -65,7 +64,18 @@ def send():
 	return render_template(
 		'send.html',
 		messages=messages,
-		send_message_form=send_message_form,
+		send_message_form=send_message_form
+	)
+
+
+@app.route('/schedule', methods=['GET', 'POST'])
+def schedule():
+	"""Render schedule message view."""
+
+	schedule_message_form = forms.ScheduleMessageForm()
+
+	return render_template(
+		'schedule.html',
 		schedule_message_form=schedule_message_form
 	)
 
