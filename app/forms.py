@@ -30,7 +30,7 @@ class ScheduleMessageForm(Form):
         choices=choices,
         validators=[DataRequired()]
     )
-    send_time = DateTimeField('send_time', format='%Y-%m-%d %H:%M:%S')
+    send_time = DateTimeField('send_time', format='%m/%d/%Y %I:%M %p')
 
 
 class AddNumberForm(Form):

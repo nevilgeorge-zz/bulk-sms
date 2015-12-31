@@ -74,6 +74,13 @@ def schedule():
 
 	schedule_message_form = forms.ScheduleMessageForm()
 
+	if schedule_message_form.validate_on_submit():
+		message_text = schedule_message_form.message_text.data
+		subscription_id = int(schedule_message_form.subscription.data)
+		print message_text, subscription_id
+		print schedule_message_form.send_time.data
+
+
 	return render_template(
 		'schedule.html',
 		schedule_message_form=schedule_message_form
