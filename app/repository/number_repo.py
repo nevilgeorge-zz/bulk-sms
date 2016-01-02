@@ -21,6 +21,8 @@ def create_one(**kwargs):
         e.number = number.number
         raise e
 
+    return number
+
 
 def get_all():
     """Return all Number entities."""

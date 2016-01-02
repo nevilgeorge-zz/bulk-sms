@@ -38,14 +38,14 @@ def send():
 		message_text = send_message_form.message_text.data
 
 		# create Message entity
-		message_repo.create_one(
+		new_message = message_repo.create_one(
 			text=message_text,
 			sent_at=datetime.datetime.utcnow(),
 			subscription_id=subscription_id
 		)
 
 		twilio_dispatcher = TwilioDispatcher()
-		failed = twilio_dispatcher.send_to_subscription(subscription_id, message_text)
+		failed = twilio_dispatcher.send_to_subscription(new_message)
 
 		if len(failed) != 0:
 			flash('Following numbers failed to be sent to:', 'error')
@@ -189,9 +189,11 @@ def subscription():
 
 	add_sub_form = forms.AddSubscriptionForm()
 	if add_sub_form.validate_on_submit():
+		title = add_sub_form.title.data
+
 		try:
 			subscription_repo.create_one(
-				title=add_sub_form.title.data
+				title=title
 			)
 			flash('Subscription added!', 'success')
 		except DuplicateError as e:

@@ -39,7 +39,7 @@ class TwilioDispatcher:
             raise e
 
 
-    def send_to_subscription(self, subscription_id, text):
+    def send_to_subscription(self, message):
         """Send one message to every number in a subscription."""
         senders = sender_repo.get_all()
         failed = {}
@@ -48,13 +48,13 @@ class TwilioDispatcher:
             # get numbers associated with each sender
             # and has given subscription_id
             numbers = number_repo.get_many_by_kwargs(
-                subscription_id=subscription_id,
+                subscription_id=message.subscription_id,
                 sender_id=sender.id
             )
 
             for number in numbers:
                 try:
-                    self.send_to_number(number.number, text)
+                    self.send_to_number(number.number, message.text)
 
                 except (TwilioRestException, NotFoundError) as e:
                     failed[number.number] = str(e)

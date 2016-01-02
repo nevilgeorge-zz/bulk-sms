@@ -16,6 +16,8 @@ def create_one(**kwargs):
         db.session.rollback()
         raise DuplicateError('Subscription already exists!')
 
+    return subscription
+
 
 def get_all():
     """Return all Subscription entities."""

@@ -16,6 +16,8 @@ def create_one(**kwargs):
         db.session.rollback()
         raise DuplicateError('Sender already exists!')
 
+    return sender
+
 
 def get_all():
     """Return all Sender entities."""

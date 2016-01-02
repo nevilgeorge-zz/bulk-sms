@@ -16,6 +16,8 @@ def create_one(**kwargs):
         db.session.rollback()
         raise DuplicateError('Message already exists!')
 
+    return message
+
 
 def get_all():
     """Return all Message entities."""
