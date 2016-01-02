@@ -77,9 +77,22 @@ def schedule():
 	if schedule_message_form.validate_on_submit():
 		message_text = schedule_message_form.message_text.data
 		subscription_id = int(schedule_message_form.subscription.data)
-		print message_text, subscription_id
-		print schedule_message_form.send_time.data
+		send_time = schedule_message_form.send_time.data
 
+		# create message_entity
+		new_message = message_repo.create_one(
+			text=message_text,
+			sent_at=send_time,
+			subscription_id=subscription_id
+		)
+
+		twilio_dispatcher = TwilioDispatcher()
+		twilio_dispatcher.schedule_message(new_message)
+
+		# reset form
+		schedule_message_form.message_text.data = None
+		schedule_message_form.subscription_id.data = 1
+		schedule_message_form.send_time.data = None
 
 	return render_template(
 		'schedule.html',
