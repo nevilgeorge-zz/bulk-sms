@@ -1,5 +1,5 @@
 # views.py
-import datetime
+from datetime import datetime, timedelta
 import os
 
 from flask import flash, redirect, render_template, url_for
@@ -7,7 +7,7 @@ from flask import flash, redirect, render_template, url_for
 from app import app, db, models, utils, repository
 from app.exceptions.duplicate_error import DuplicateError
 from app.repository import message_repo, number_repo, sender_repo, subscription_repo
-from app.twilio_dispatcher import TwilioDispatcher
+from app.twilio_dispatcher import TwilioDispatcher, send_to_subscription_async
 import forms
 
 @app.route('/')
@@ -41,7 +41,7 @@ def send():
 		# create Message entity
 		message_repo.create_one(
 			text=message_text,
-			sent_at=datetime.datetime.utcnow(),
+			sent_at=datetime.utcnow(),
 			subscription_id=subscription_id
 		)
 
@@ -58,6 +58,7 @@ def send():
 
 		send_message_form.message_text.data = None
 		send_message_form.subscription.data = None
+		flash('Messages sent!', 'success')
 
 	messages = message_repo.get_all()
 
@@ -79,19 +80,21 @@ def schedule():
 		subscription_id = int(schedule_message_form.subscription.data)
 		send_time = schedule_message_form.send_time.data
 
-		# create message_entity
-		new_message = message_repo.create_one(
-			text=message_text,
-			sent_at=send_time,
-			subscription_id=subscription_id
-		)
+		# fail if given send_time is already passed
+		if send_time < datetime.now():
+			flash('DateTime is already passed!', 'error')
+			return redirect('/schedule')
 
-		twilio_dispatcher = TwilioDispatcher()
-		twilio_dispatcher.schedule_message(new_message)
+		utc_send_time = utils.convert_to_utc_time(send_time)
+		send_to_subscription_async.apply_async(
+			args=[subscription_id, message_text],
+			eta=utc_send_time
+		)
+		flash('Message scheduled!', 'success')
 
 		# reset form
 		schedule_message_form.message_text.data = None
-		schedule_message_form.subscription_id.data = 1
+		schedule_message_form.subscription.data = 1
 		schedule_message_form.send_time.data = None
 
 	return render_template(
