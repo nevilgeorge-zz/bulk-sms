@@ -1,13 +1,13 @@
 # views.py
-import datetime
+from datetime import datetime, timedelta
 import os
 
-from flask import flash, redirect, render_template
+from flask import flash, redirect, render_template, url_for
 
 from app import app, db, models, utils, repository
 from app.exceptions.duplicate_error import DuplicateError
 from app.repository import message_repo, number_repo, sender_repo, subscription_repo
-from app.twilio_dispatcher import TwilioDispatcher
+from app.twilio_dispatcher import TwilioDispatcher, send_to_subscription_async
 import forms
 
 @app.route('/')
@@ -26,6 +26,7 @@ def send():
 	"""Render sms sending page."""
 
 	send_message_form = forms.SendMessageForm()
+
 	if send_message_form.validate_on_submit():
 		# check if there are any active senders first
 		senders = sender_repo.get_all()
@@ -40,7 +41,7 @@ def send():
 		# create Message entity
 		new_message = message_repo.create_one(
 			text=message_text,
-			sent_at=datetime.datetime.utcnow(),
+			sent_at=datetime.utcnow(),
 			subscription_id=subscription_id
 		)
 
@@ -57,13 +58,48 @@ def send():
 
 		send_message_form.message_text.data = None
 		send_message_form.subscription.data = None
+		flash('Messages sent!', 'success')
 
 	messages = message_repo.get_all()
 
 	return render_template(
 		'send.html',
 		messages=messages,
-		form=send_message_form
+		send_message_form=send_message_form
+	)
+
+
+@app.route('/schedule', methods=['GET', 'POST'])
+def schedule():
+	"""Render schedule message view."""
+
+	schedule_message_form = forms.ScheduleMessageForm()
+
+	if schedule_message_form.validate_on_submit():
+		message_text = schedule_message_form.message_text.data
+		subscription_id = int(schedule_message_form.subscription.data)
+		send_time = schedule_message_form.send_time.data
+
+		# fail if given send_time is already passed
+		if send_time < datetime.now():
+			flash('DateTime is already passed!', 'error')
+			return redirect('/schedule')
+
+		utc_send_time = utils.convert_to_utc_time(send_time)
+		send_to_subscription_async.apply_async(
+			args=[subscription_id, message_text],
+			eta=utc_send_time
+		)
+		flash('Message scheduled!', 'success')
+
+		# reset form
+		schedule_message_form.message_text.data = None
+		schedule_message_form.subscription.data = 1
+		schedule_message_form.send_time.data = None
+
+	return render_template(
+		'schedule.html',
+		schedule_message_form=schedule_message_form
 	)
 
 

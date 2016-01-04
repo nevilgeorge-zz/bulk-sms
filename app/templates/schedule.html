@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1> Schedule message here </h1>
+  <form action="" method="post" name="schedule_message">
+    {{ schedule_message_form.hidden_tag() }}
+    <div>
+      <h3> Message text: </h3>
+      {{ schedule_message_form.message_text(size=200) }}
+    </div>
+    <div>
+      {{ schedule_message_form.subscription }}
+    </div>
+    <div class="col-sm-2 input-group date" id='datetimepicker1'>
+      {{ schedule_message_form.send_time(class='form-control') }}
+      <span class="input-group-addon">
+        <span class="glyphicon glyphicon-calendar"></span>
+      </span>
+    </div>
+    <input type="submit" value="Schedule message">
+  </form>
+
+  <script>
+    $(document).ready(function() {
+      $('#datetimepicker1').datetimepicker();
+    });
+  </script>
+{% endblock %}

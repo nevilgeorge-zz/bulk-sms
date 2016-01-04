@@ -1,5 +1,6 @@
 # utils.py
 import csv
+from datetime import datetime, timedelta
 import re
 
 def normalize_number(input_number):
@@ -35,3 +36,17 @@ def read_from_csv_file(f):
             numbers.append(number)
 
     return numbers
+
+
+def convert_to_utc_time(time):
+    """Converts a given datetime to the equivalent in the UTC timezone."""
+    now = datetime.now()
+    hour_diff = time.hour - now.hour
+    minute_diff = time.minute - now.minute
+
+    utc_time = datetime.utcnow() + timedelta(
+        hours=hour_diff,
+        minutes=minute_diff
+    )
+
+    return utc_time

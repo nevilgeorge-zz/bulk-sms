@@ -6,3 +6,4 @@ app/*.pyc
 *.db
 *.db-*
 db_repository
+*.rdb

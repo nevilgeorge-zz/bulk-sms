@@ -1,4 +1,7 @@
 # twilio_dispatcher.py
+from datetime import datetime
+
+from celery import task
 from twilio import TwilioRestException
 from twilio.rest import TwilioRestClient
 
@@ -61,3 +64,33 @@ class TwilioDispatcher:
                     pass
 
         return failed
+
+
+# not a class method
+# Celery has issues with using @task on class methods
+@task
+def send_to_subscription_async(subscription_id, text):
+    """Schedules a message to be sent at a later time by a Celery task."""
+    senders = sender_repo.get_all()
+    twilio_dispatcher = TwilioDispatcher()
+
+    for sender in senders:
+
+        numbers = number_repo.get_many_by_kwargs(
+            subscription_id=subscription_id,
+            sender_id=sender.id
+        )
+
+        for number in numbers:
+            try:
+                twilio_dispatcher.send_to_number(number.number, text)
+
+            except (TwilioRestException, NotFoundError) as e:
+                pass
+
+    # create message entity once scheduled message has been sent
+    message_repo.create_one(
+        text=text,
+        subscription_id=subscription_id,
+        send_at=datetime.utcnow()
+    )
