@@ -1,5 +1,5 @@
 # bulk-sms
-Bulk text message sending for hackathons and other large events
+Bulk text message sending for hackathons and other large events. http://www.bulksms.nevilgeorge.me/ (please excuse the lack of styling)
 
 ## Development
 * Clone the repo
