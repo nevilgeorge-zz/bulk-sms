@@ -7,7 +7,7 @@ from twilio.rest import TwilioRestClient
 
 from app import utils
 from app.exceptions.not_found_error import NotFoundError
-from app.repository import number_repo, sender_repo, subscription_repo
+from app.repository import message_repo, number_repo, sender_repo, subscription_repo
 from config import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
 
 class TwilioDispatcher:
@@ -69,7 +69,7 @@ class TwilioDispatcher:
 # not a class method
 # Celery has issues with using @task on class methods
 @task
-def send_to_subscription_async(subscription_id, text):
+def send_to_subscription_async(message_id, subscription_id, message_text):
     """Schedules a message to be sent at a later time by a Celery task."""
     senders = sender_repo.get_all()
     twilio_dispatcher = TwilioDispatcher()
@@ -83,14 +83,10 @@ def send_to_subscription_async(subscription_id, text):
 
         for number in numbers:
             try:
-                twilio_dispatcher.send_to_number(number.number, text)
+                twilio_dispatcher.send_to_number(number.number, message_text)
 
             except (TwilioRestException, NotFoundError) as e:
                 pass
 
-    # create message entity once scheduled message has been sent
-    message_repo.create_one(
-        text=text,
-        subscription_id=subscription_id,
-        send_at=datetime.utcnow()
-    )
+    # update message entity's sent_at
+    message_repo.update_by_id(message_id, sent_at=datetime.utcnow())

@@ -40,3 +40,30 @@ def get_one_by_kwargs(**kwargs):
     """Return first Message entity by given kwargs."""
     message = models.Message.query.filter_by(**kwargs).first()
     return message
+
+
+# additional functions
+def get_sent_messages():
+    """Return all sent messages."""
+    messages = models.Message.query.filter(models.Message.sent_at!=None).all()
+    return messages
+
+
+def get_scheduled_messages():
+    """Return all scheduled, but not yet sent, messages."""
+    messages = models.Message.query.filter(models.Message.sent_at==None).all()
+    return messages
+
+
+def update_by_id(message_id, **kwargs):
+    """Update the attributes in kwargs of the given entity."""
+    # get message
+    message = models.Message.query.filter_by(id=message_id).first()
+
+    # update message
+    for attr, val in kwargs.iteritems():
+        setattr(message, attr, val)
+
+    # save message
+    db.session.add(message)
+    db.session.commit()

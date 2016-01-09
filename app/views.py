@@ -58,9 +58,9 @@ def send():
 
 		send_message_form.message_text.data = None
 		send_message_form.subscription.data = None
-		flash('Messages sent!', 'success')
+		flash('Message sent!', 'success')
 
-	messages = message_repo.get_all()
+	messages = message_repo.get_sent_messages()
 
 	return render_template(
 		'send.html',
@@ -85,9 +85,16 @@ def schedule():
 			flash('DateTime is already passed!', 'error')
 			return redirect('/schedule')
 
+		# create message entity with None as sent_at
+		message = message_repo.create_one(
+			text=message_text,
+			subscription_id=subscription_id,
+			sent_at=None
+		)
+
 		utc_send_time = utils.convert_to_utc_time(send_time)
 		send_to_subscription_async.apply_async(
-			args=[subscription_id, message_text],
+			args=[message.id, subscription_id, message_text],
 			eta=utc_send_time
 		)
 		flash('Message scheduled!', 'success')
