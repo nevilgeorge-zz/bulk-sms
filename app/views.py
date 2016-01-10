@@ -81,8 +81,7 @@ def schedule():
 		send_time = schedule_message_form.send_time.data
 
 		# fail if given send_time is already passed
-		utc_send_time = utils.convert_to_utc_time(send_time)
-		if utc_send_time < datetime.utcnow():
+		if send_time < datetime.utcnow():
 			flash('DateTime is already passed!', 'error')
 			return redirect('/schedule')
 
@@ -95,7 +94,7 @@ def schedule():
 
 		send_to_subscription_async.apply_async(
 			args=[message.id, subscription_id, message_text],
-			eta=utc_send_time
+			eta=send_time
 		)
 		flash('Message scheduled!', 'success')
 

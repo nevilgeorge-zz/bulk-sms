@@ -23,5 +23,16 @@
     $(document).ready(function() {
       $('#datetimepicker1').datetimepicker();
     });
+    $('form').submit(function() {
+      var dateString = $('#send_time').val();
+      // convert dateString to a Date object
+      var date = new Date(Date.parse(dateString));
+      // convert the UTC string to a Date object
+      var UTCDate = new Date(date.toUTCString().substr(0, 25));
+      // use moment to return formatted string of date
+      var newDateString = moment(UTCDate).format('MM/DD/YYYY hh:mm A');
+      $('#send_time').val(newDateString);
+      return true;
+    });
   </script>
 {% endblock %}
