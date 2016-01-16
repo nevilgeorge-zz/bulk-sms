@@ -19,6 +19,15 @@
     <input type="submit" value="Schedule message">
   </form>
 
+  {% if scheduled_messages|length > 0 %}
+  <h3> Scheduled messages </h3>
+  <ul>
+  {% for message in scheduled_messages %}
+    <li> {{ message.text }} </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+
   <script>
     $(document).ready(function() {
       $('#datetimepicker1').datetimepicker();

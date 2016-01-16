@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import os
 
 from flask import flash, redirect, render_template, url_for
+from redis.exceptions import ConnectionError
 
 from app import app, db, models, utils, repository
 from app.exceptions.duplicate_error import DuplicateError
@@ -92,10 +93,15 @@ def schedule():
 			sent_at=None
 		)
 
-		send_to_subscription_async.apply_async(
-			args=[message.id, subscription_id, message_text],
-			eta=send_time
-		)
+		try:
+			send_to_subscription_async.apply_async(
+				args=[message.id, subscription_id, message_text],
+				eta=send_time
+			)
+		except ConnectionError:
+			flash('Redis server not running at port 6379!', 'error')
+			return redirect('/schedule')
+
 		flash('Message scheduled!', 'success')
 
 		# reset form
@@ -103,9 +109,12 @@ def schedule():
 		schedule_message_form.subscription.data = 1
 		schedule_message_form.send_time.data = None
 
+	scheduled_messages = message_repo.get_scheduled_messages()
+
 	return render_template(
 		'schedule.html',
-		schedule_message_form=schedule_message_form
+		schedule_message_form=schedule_message_form,
+		scheduled_messages=scheduled_messages
 	)
 
 
